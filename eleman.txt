@@ -1,0 +1,23 @@
+[
+    {
+        "student_id": 1,
+        "name": "haki",
+        "address": "sada",
+        "phone": "21313",
+        "email": "sadad",
+        "nationality": "kmlkn",
+        "birth_date": "2991",
+        "foreign_language": "advanced",
+        "interests": [
+            "klasm"
+        ],
+        "gpa": 21.0,
+        "internships": [
+            {
+                "company": "askda",
+                "duration": "sada"
+            }
+        ],
+        "department": "yazılım"
+    }
+]
