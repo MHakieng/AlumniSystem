@@ -4,6 +4,7 @@ from tabulate import tabulate
 import json
 import os
 
+# Öğrenci sınıfı, öğrenci bilgilerini tutmak için oluşturulmuştur.
 class Student:
     def __init__(self, student_id, name, address, phone, email, nationality, birth_date, foreign_language, interests, gpa, internships, department):
         self.student_id = student_id
@@ -35,17 +36,20 @@ class Student:
             'department': self.department
         }
 
+# Mezun sistemi sınıfı, öğrenci kayıtlarını yönetmek için kullanılmaktadır.
 class AlumniSystem:
     def __init__(self, file_name='eleman.txt'):
         self.students = {}
         self.file_name = file_name
         self.load_from_file()
 
+    # Öğrenci kaydını sisteme ekler ve dosyaya kaydeder
     def register_student(self, student_data):
         student = Student(**student_data)
         self.students[student.student_id] = student
         self.save_to_file()
 
+    # Öğrenci bilgilerini günceller ve dosyaya kaydeder
     def update_student_info(self, student_id, updated_data):
         if student_id in self.students:
             for key, value in updated_data.items():
@@ -54,6 +58,7 @@ class AlumniSystem:
         else:
             raise ValueError("Student not found")
 
+    # Öğrenci kaydını sistemden siler ve dosyaya kaydeder
     def remove_student(self, student_id):
         if student_id in self.students:
             del self.students[student_id]
@@ -73,10 +78,12 @@ class AlumniSystem:
     def list_advanced_english_students(self):
         return [student for student in self.students.values() if student.foreign_language.lower() == 'advanced']
 
+    # Öğrencileri dosyaya kaydeder
     def save_to_file(self):
         with open(self.file_name, 'w', encoding='utf-8') as f:
             json.dump([student.to_dict() for student in self.students.values()], f, ensure_ascii=False, indent=4)
 
+    # Dosyadan öğrencileri yükler
     def load_from_file(self):
         if os.path.exists(self.file_name):
             try:
@@ -88,6 +95,7 @@ class AlumniSystem:
             except Exception as e:
                 print(f"Error loading from file: {e}")
 
+# Mezun Sistemi Uygulaması sınıfı, kullanıcı arayüzü ile etkileşim sağlar.
 class AlumniSystemApp:
     def __init__(self, root):
         self.root = root
@@ -97,12 +105,14 @@ class AlumniSystemApp:
         self.main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         self._widgets()
 
+    # Arayüz bileşenlerini oluşturur
     def _widgets(self):
         self.create_student_form()
         self.create_search_frame()
         self.create_buttons()
         self.create_output_box()
 
+    # Öğrenci bilgilerini girmek için form oluşturur
     def create_student_form(self):
         self.form_frame = tk.LabelFrame(self.main_frame, text="Öğrenci Bilgileri", padx=10, pady=10)
         self.form_frame.grid(row=0, column=0, sticky="nsew")
@@ -117,6 +127,7 @@ class AlumniSystemApp:
             entry.grid(row=i, column=1, padx=5, pady=5, sticky=tk.W)
             self.entries[label] = entry
 
+    # Öğrenci arama çerçevesini oluşturur
     def create_search_frame(self):
         self.search_frame = tk.LabelFrame(self.main_frame, text="Öğrenci Arama", padx=10, pady=10)
         self.search_frame.grid(row=0, column=1, sticky="nsew")
@@ -127,6 +138,7 @@ class AlumniSystemApp:
         self.search_button = tk.Button(self.search_frame, text="Ara", command=self.search_student)
         self.search_button.grid(row=0, column=1, padx=5, pady=5)
 
+    # Arayüzdeki düğmeleri oluşturur
     def create_buttons(self):
         self.button_frame = tk.Frame(self.main_frame)
         self.button_frame.grid(row=1, column=0, columnspan=2, pady=10)
@@ -149,16 +161,19 @@ class AlumniSystemApp:
         self.list_advanced_english_button = tk.Button(self.button_frame, text="İleri Seviye İngilizce Bilen Öğrenciler", command=self.list_advanced_english_students)
         self.list_advanced_english_button.grid(row=0, column=5, padx=5, pady=5)
 
+    # Çıktı kutusunu oluşturur
     def create_output_box(self):
         self.output_box = tk.Text(self.main_frame, height=10)
         self.output_box.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=10, pady=10)
 
+    # Formdan öğrenci verilerini alır
     def get_student_data_from_form(self):
         data = {}
         for label, entry in self.entries.items():
             data[label] = entry.get()
         return data
 
+    # Öğrenci verilerini doğrular
     def validate_student_data(self, student_data):
         try:
             student_data['student_id'] = int(student_data.pop('ID'))
@@ -182,10 +197,12 @@ class AlumniSystemApp:
         except Exception as e:
             raise Exception(f"Veri doğrulanırken hata: {e}")
 
+    # Formu temizler
     def clear_form(self):
         for entry in self.entries.values():
             entry.delete(0, tk.END)
 
+    # Öğrenciyi kaydeder
     def register_student(self):
         try:
             student_data = self.get_student_data_from_form()
@@ -196,6 +213,7 @@ class AlumniSystemApp:
         except Exception as e:
             messagebox.showerror("Hata", f"Öğrenci kaydedilirken hata: {e}")
 
+    # Öğrenci bilgilerini günceller
     def update_student(self):
         try:
             student_id = int(self.entries["ID"].get())
@@ -209,6 +227,7 @@ class AlumniSystemApp:
         except Exception as e:
             messagebox.showerror("Hata", f"Öğrenci güncellenirken hata: {e}")
 
+    # Öğrenciyi siler
     def remove_student(self):
         try:
             student_id = int(self.entries["ID"].get())
@@ -220,6 +239,7 @@ class AlumniSystemApp:
         except Exception as e:
             messagebox.showerror("Hata", f"Öğrenci silinirken hata: {e}")
 
+    # Öğrenci arar
     def search_student(self):
         try:
             student_id = int(self.search_entry.get())
@@ -235,6 +255,7 @@ class AlumniSystemApp:
         except Exception as e:
             messagebox.showerror("Hata", f"Öğrenci aranırken hata: {e}")
 
+    # Bölümdeki öğrencileri listeler
     def list_department_students(self):
         try:
             department_name = self.entries["Bölüm"].get()
@@ -248,6 +269,7 @@ class AlumniSystemApp:
         except Exception as e:
             messagebox.showerror("Hata", f"Öğrenciler listelenirken hata: {e}")
 
+    # Yüksek not ortalamasına sahip öğrencileri listeler
     def list_high_gpa_students(self):
         try:
             students = self.system.list_high_gpa_students()
@@ -260,6 +282,7 @@ class AlumniSystemApp:
         except Exception as e:
             messagebox.showerror("Hata", f"Öğrenciler listelenirken hata: {e}")
 
+    # İleri seviye İngilizce bilen öğrencileri listeler
     def list_advanced_english_students(self):
         try:
             students = self.system.list_advanced_english_students()
